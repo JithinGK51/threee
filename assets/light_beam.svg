@@ -1,0 +1,9 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="beam" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#d3a410" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#d3a410" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="60" y="10" width="80" height="90" fill="url(#beam)"/>
+</svg>

@@ -1,3 +1,13 @@
+## 0.0.9
+
+* Live wave animation implementation with phase-shifted motions
+* Separated SVG layers for independent animation control
+* Smooth vertical wave bounce for entire cube stack
+* Light beam breathing effect with opacity pulse
+* Gold outline wave delay for depth perception
+* Particles floating with independent vertical and horizontal drift
+* Premium, alive feeling with continuous smooth loop
+
 ## 0.0.8
 
 * Proper Flutter implementation using flutter_svg
