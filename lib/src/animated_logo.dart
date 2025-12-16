@@ -42,10 +42,7 @@ class _AnimatedLogoState extends State<AnimatedLogo>
       vsync: this,
     )..repeat(reverse: true);
     _bounceAnimation = Tween<double>(begin: 36.0, end: 46.0).animate(
-      CurvedAnimation(
-        parent: _bounceController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _bounceController, curve: Curves.easeInOut),
     );
 
     // Bounce2 animation (4s ease-in-out infinite, 0.5s delay)
@@ -54,10 +51,7 @@ class _AnimatedLogoState extends State<AnimatedLogo>
       vsync: this,
     );
     _bounce2Animation = Tween<double>(begin: 46.0, end: 56.0).animate(
-      CurvedAnimation(
-        parent: _bounce2Controller,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _bounce2Controller, curve: Curves.easeInOut),
     );
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) _bounce2Controller.repeat(reverse: true);
@@ -68,12 +62,10 @@ class _AnimatedLogoState extends State<AnimatedLogo>
       duration: const Duration(seconds: 4),
       vsync: this,
     )..repeat();
-    _umbralAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _umbralController,
-        curve: Curves.linear,
-      ),
-    );
+    _umbralAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _umbralController, curve: Curves.linear));
 
     // Particles animation (4s ease-in-out infinite)
     _particlesController = AnimationController(
@@ -81,10 +73,7 @@ class _AnimatedLogoState extends State<AnimatedLogo>
       vsync: this,
     )..repeat(reverse: true);
     _particlesAnimation = Tween<double>(begin: 16.0, end: 6.0).animate(
-      CurvedAnimation(
-        parent: _particlesController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _particlesController, curve: Curves.easeInOut),
     );
   }
 
@@ -174,11 +163,12 @@ class _LogoPainter extends CustomPainter {
     }
 
     // Animated umbral color
-    final umbralColor = Color.lerp(
-      const Color(0x2ED3A510),
-      const Color(0x84D3A510),
-      (math.sin(umbralProgress * 2 * math.pi) + 1) / 2,
-    )!;
+    final umbralColor =
+        Color.lerp(
+          const Color(0x2ED3A510),
+          const Color(0x84D3A510),
+          (math.sin(umbralProgress * 2 * math.pi) + 1) / 2,
+        )!;
 
     // Polygon 1: bounce (rotated 45°, stroke only)
     canvas.save();
@@ -245,10 +235,7 @@ class _LogoPainter extends CustomPainter {
       y1Percent: 0,
       x2Percent: 10,
       y2Percent: 100,
-      colors: [
-        const Color(0xFF1E2026),
-        const Color(0xFF414750),
-      ],
+      colors: [const Color(0xFF1E2026), const Color(0xFF414750)],
       stops: [0.2, 0.6],
     );
     _drawPolygonWithGradient(
@@ -286,10 +273,7 @@ class _LogoPainter extends CustomPainter {
       y1Percent: -17,
       x2Percent: 0,
       y2Percent: 100,
-      colors: [
-        const Color(0x00D3A510),
-        umbralColor,
-      ],
+      colors: [const Color(0x00D3A510), umbralColor],
       stops: [0.2, 1.0],
     );
     canvas.save();
@@ -333,10 +317,7 @@ class _LogoPainter extends CustomPainter {
       y1Percent: 0,
       x2Percent: 10,
       y2Percent: 100,
-      colors: [
-        const Color(0x00D3A510),
-        umbralColor,
-      ],
+      colors: [const Color(0x00D3A510), umbralColor],
       stops: [0.2, 1.0],
     );
     canvas.save();
@@ -537,4 +518,3 @@ class _LogoPainter extends CustomPainter {
         oldDelegate.size != size;
   }
 }
-
