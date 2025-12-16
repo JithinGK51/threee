@@ -1,3 +1,10 @@
+## 0.0.4
+
+* Fixed animated logo to match exact SVG/CSS specifications
+* Improved umbral color animation to match CSS keyframes exactly
+* Fixed deprecated withOpacity method to use withValues
+* Enhanced visual accuracy of 3D geometric logo
+
 ## 0.0.3
 
 * Fixed code formatting issues to pass Dart formatter checks
