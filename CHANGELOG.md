@@ -1,3 +1,9 @@
+## 0.0.2
+
+* Fixed static analysis issues (use super parameters)
+* Removed unnecessary library declaration
+* Added badges to README (pub.dev and license badges)
+
 ## 0.0.1
 
 * Initial release
