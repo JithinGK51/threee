@@ -1,3 +1,11 @@
+## 0.0.8
+
+* Proper Flutter implementation using flutter_svg
+* Uses Transform.translate for bounce and particles animations
+* AnimationController replaces CSS @keyframes
+* Clean separation of animated layers using Stack
+* SVG asset file with complete structure
+
 ## 0.0.7
 
 * Version update and improvements
