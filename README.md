@@ -1,5 +1,8 @@
 # Threee
 
+[![pub package](https://img.shields.io/pub/v/threee.svg)](https://pub.dev/packages/threee)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A Flutter package that provides an animated 3D-style geometric logo widget with smooth bouncing animations and gradient effects.
 
 ## Features

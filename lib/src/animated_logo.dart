@@ -11,10 +11,10 @@ class AnimatedLogo extends StatefulWidget {
   final Color backgroundColor;
 
   const AnimatedLogo({
-    Key? key,
+    super.key,
     this.size = 200,
     this.backgroundColor = const Color(0xFF414141),
-  }) : super(key: key);
+  });
 
   @override
   State<AnimatedLogo> createState() => _AnimatedLogoState();
