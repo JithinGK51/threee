@@ -1,8 +1,10 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 /// An animated logo widget that displays a 3D-style geometric logo
 /// with bouncing animations and gradient effects.
+/// Uses SVG rendering with Flutter animations matching CSS keyframes.
 class AnimatedLogo extends StatefulWidget {
   /// The size of the logo (width and height)
   final double size;
@@ -36,8 +38,7 @@ class _AnimatedLogoState extends State<AnimatedLogo>
   void initState() {
     super.initState();
 
-    // Bounce animation (4s ease-in-out infinite)
-    // CSS: 0%,100% translate: 0px 36px, 50% translate: 0px 46px
+    // CSS: @keyframes bounce - 0%,100% translate: 0px 36px, 50% translate: 0px 46px
     _bounceController = AnimationController(
       duration: const Duration(seconds: 4),
       vsync: this,
@@ -46,8 +47,8 @@ class _AnimatedLogoState extends State<AnimatedLogo>
       CurvedAnimation(parent: _bounceController, curve: Curves.easeInOut),
     );
 
-    // Bounce2 animation (4s ease-in-out infinite, 0.5s delay)
-    // CSS: 0%,100% translate: 0px 46px, 50% translate: 0px 56px
+    // CSS: @keyframes bounce2 - 0%,100% translate: 0px 46px, 50% translate: 0px 56px
+    // animation-delay: 0.5s
     _bounce2Controller = AnimationController(
       duration: const Duration(seconds: 4),
       vsync: this,
@@ -59,8 +60,7 @@ class _AnimatedLogoState extends State<AnimatedLogo>
       if (mounted) _bounce2Controller.repeat(reverse: true);
     });
 
-    // Umbral animation (color animation, 4s infinite)
-    // CSS: 0% #d3a5102e, 50% rgba(211, 165, 16, 0.519), 100% #d3a5102e
+    // CSS: @keyframes umbral - 0% #d3a5102e, 50% rgba(211, 165, 16, 0.519), 100% #d3a5102e
     _umbralController = AnimationController(
       duration: const Duration(seconds: 4),
       vsync: this,
@@ -70,8 +70,7 @@ class _AnimatedLogoState extends State<AnimatedLogo>
       end: 1.0,
     ).animate(CurvedAnimation(parent: _umbralController, curve: Curves.linear));
 
-    // Particles animation (4s ease-in-out infinite)
-    // CSS: 0%,100% translate: 0px 16px, 50% translate: 0px 6px
+    // CSS: @keyframes partciles - 0%,100% translate: 0px 16px, 50% translate: 0px 6px
     _particlesController = AnimationController(
       duration: const Duration(seconds: 4),
       vsync: this,
@@ -90,6 +89,133 @@ class _AnimatedLogoState extends State<AnimatedLogo>
     super.dispose();
   }
 
+  String _getAnimatedSvg() {
+    // Calculate umbral color for animated stops
+    final umbralOpacityValue =
+        (math.sin(_umbralAnimation.value * 2 * math.pi) + 1) / 2;
+    final umbralOpacity = 0.1804 + (0.519 - 0.1804) * umbralOpacityValue;
+    final umbralHex = (umbralOpacity * 255)
+        .round()
+        .toRadixString(16)
+        .padLeft(2, '0');
+    final umbralColor = '#d3a510$umbralHex';
+
+    return '''
+<svg xmlns="http://www.w3.org/2000/svg" height="200" width="200">
+  <defs>
+    <linearGradient y2="100%" x2="10%" y1="0%" x1="0%" id="gradiente">
+      <stop style="stop-color: #1e2026;stop-opacity:1" offset="20%"></stop>
+      <stop style="stop-color:#414750;stop-opacity:1" offset="60%"></stop>
+    </linearGradient>
+    <linearGradient y2="100%" x2="0%" y1="-17%" x1="10%" id="gradiente2">
+      <stop style="stop-color: #d3a51000;stop-opacity:1" offset="20%"></stop>
+      <stop style="stop-color:$umbralColor;stop-opacity:1" offset="100%" id="animatedStop2"></stop>
+    </linearGradient>
+    <linearGradient y2="100%" x2="10%" y1="0%" x1="0%" id="gradiente3">
+      <stop style="stop-color: #d3a51000;stop-opacity:1" offset="20%"></stop>
+      <stop style="stop-color:$umbralColor;stop-opacity:1" offset="100%" id="animatedStop3"></stop>
+    </linearGradient>
+  </defs>
+  <g style="order: -1;">
+    <polygon
+      transform="rotate(45 100 100) translate(0, ${_bounceAnimation.value})"
+      stroke-width="1"
+      stroke="#d3a410"
+      fill="none"
+      points="70,70 148,50 130,130 50,150"
+      id="bounce"
+    ></polygon>
+    <polygon
+      transform="rotate(45 100 100) translate(0, ${_bounce2Animation.value})"
+      stroke-width="1"
+      stroke="#d3a410"
+      fill="none"
+      points="70,70 148,50 130,130 50,150"
+      id="bounce2"
+    ></polygon>
+    <polygon
+      transform="rotate(45 100 100)"
+      stroke-width="2"
+      stroke=""
+      fill="#414750"
+      points="70,70 150,50 130,130 50,150"
+    ></polygon>
+    <polygon
+      stroke-width="2"
+      stroke=""
+      fill="url(#gradiente)"
+      points="100,70 150,100 100,130 50,100"
+    ></polygon>
+    <polygon
+      transform="translate(20, 31)"
+      stroke-width="2"
+      stroke=""
+      fill="#b7870f"
+      points="80,50 80,75 80,99 40,75"
+    ></polygon>
+    <polygon
+      transform="translate(20, 31)"
+      stroke-width="2"
+      stroke=""
+      fill="url(#gradiente2)"
+      points="40,-40 80,-40 80,99 40,75"
+    ></polygon>
+    <polygon
+      transform="rotate(180 100 100) translate(20, 20)"
+      stroke-width="2"
+      stroke=""
+      fill="#d3a410"
+      points="80,50 80,75 80,99 40,75"
+    ></polygon>
+    <polygon
+      transform="rotate(0 100 100) translate(60, 20)"
+      stroke-width="2"
+      stroke=""
+      fill="url(#gradiente3)"
+      points="40,-40 80,-40 80,85 40,110.2"
+    ></polygon>
+    <polygon
+      transform="rotate(45 100 100) translate(80, ${95 + _particlesAnimation.value})"
+      stroke-width="2"
+      stroke=""
+      fill="#ffe4a1"
+      points="5,0 5,5 0,5 0,0"
+      id="particles"
+    ></polygon>
+    <polygon
+      transform="rotate(45 100 100) translate(80, ${55 + _particlesAnimation.value})"
+      stroke-width="2"
+      stroke=""
+      fill="#ccb069"
+      points="6,0 6,6 0,6 0,0"
+      id="particles"
+    ></polygon>
+    <polygon
+      transform="rotate(45 100 100) translate(70, ${80 + _particlesAnimation.value})"
+      stroke-width="2"
+      stroke=""
+      fill="#fff"
+      points="2,0 2,2 0,2 0,0"
+      id="particles"
+    ></polygon>
+    <polygon
+      stroke-width="2"
+      stroke=""
+      fill="#292d34"
+      points="29.5,99.8 100,142 100,172 29.5,130"
+    ></polygon>
+    <polygon
+      transform="translate(50, 92)"
+      stroke-width="2"
+      stroke=""
+      fill="#1f2127"
+      points="50,50 120.5,8 120.5,35 50,80"
+    ></polygon>
+  </g>
+</svg>
+''';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -104,422 +230,14 @@ class _AnimatedLogoState extends State<AnimatedLogo>
           _particlesAnimation,
         ]),
         builder: (context, child) {
-          return CustomPaint(
-            painter: _LogoPainter(
-              bounceOffset: _bounceAnimation.value,
-              bounce2Offset: _bounce2Animation.value,
-              umbralProgress: _umbralAnimation.value,
-              particlesOffset: _particlesAnimation.value,
-              size: widget.size,
-            ),
+          return SvgPicture.string(
+            _getAnimatedSvg(),
+            width: widget.size,
+            height: widget.size,
+            fit: BoxFit.contain,
           );
         },
       ),
     );
-  }
-}
-
-class _LogoPainter extends CustomPainter {
-  final double bounceOffset;
-  final double bounce2Offset;
-  final double umbralProgress;
-  final double particlesOffset;
-  final double size;
-
-  _LogoPainter({
-    required this.bounceOffset,
-    required this.bounce2Offset,
-    required this.umbralProgress,
-    required this.particlesOffset,
-    required this.size,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final centerX = this.size / 2;
-    final centerY = this.size / 2;
-    final scale = this.size / 200.0; // Original SVG is 200x200
-
-    canvas.save();
-
-    // Helper function to create gradient
-    LinearGradient createGradient({
-      required double x1Percent,
-      required double y1Percent,
-      required double x2Percent,
-      required double y2Percent,
-      required List<Color> colors,
-      required List<double> stops,
-    }) {
-      return LinearGradient(
-        begin: Alignment(
-          (x1Percent / 100 - 0.5) * 2,
-          (y1Percent / 100 - 0.5) * 2,
-        ),
-        end: Alignment(
-          (x2Percent / 100 - 0.5) * 2,
-          (y2Percent / 100 - 0.5) * 2,
-        ),
-        colors: colors,
-        stops: stops,
-      );
-    }
-
-    // Animated umbral color - matches CSS exactly
-    // 0%: #d3a5102e (0x2E = 46/255 ≈ 0.18 opacity)
-    // 50%: rgba(211, 165, 16, 0.519) (0x84 = 132/255 ≈ 0.52 opacity)
-    // 100%: #d3a5102e
-    final umbralOpacity =
-        0.18 +
-        (0.519 - 0.18) * (math.sin(umbralProgress * 2 * math.pi) + 1) / 2;
-    final umbralColor = Color(0xFFD3A510).withValues(alpha: umbralOpacity);
-
-    // Draw polygons in the correct order (matching SVG order)
-    // Polygon 1: bounce (rotated 45°, stroke only, animated)
-    canvas.save();
-    canvas.translate(centerX, centerY);
-    canvas.rotate(45 * math.pi / 180);
-    canvas.translate(-centerX, -centerY);
-    canvas.translate(0, bounceOffset * scale);
-    _drawPolygon(
-      canvas,
-      [
-        Offset(70 * scale, 70 * scale),
-        Offset(148 * scale, 50 * scale),
-        Offset(130 * scale, 130 * scale),
-        Offset(50 * scale, 150 * scale),
-      ],
-      strokeColor: const Color(0xFFD3A410),
-      strokeWidth: 1 * scale,
-      fill: false,
-    );
-    canvas.restore();
-
-    // Polygon 2: bounce2 (rotated 45°, stroke only, animated with delay)
-    canvas.save();
-    canvas.translate(centerX, centerY);
-    canvas.rotate(45 * math.pi / 180);
-    canvas.translate(-centerX, -centerY);
-    canvas.translate(0, bounce2Offset * scale);
-    _drawPolygon(
-      canvas,
-      [
-        Offset(70 * scale, 70 * scale),
-        Offset(148 * scale, 50 * scale),
-        Offset(130 * scale, 130 * scale),
-        Offset(50 * scale, 150 * scale),
-      ],
-      strokeColor: const Color(0xFFD3A410),
-      strokeWidth: 1 * scale,
-      fill: false,
-    );
-    canvas.restore();
-
-    // Polygon 3: filled dark polygon (rotated 45°)
-    canvas.save();
-    canvas.translate(centerX, centerY);
-    canvas.rotate(45 * math.pi / 180);
-    canvas.translate(-centerX, -centerY);
-    _drawPolygon(
-      canvas,
-      [
-        Offset(70 * scale, 70 * scale),
-        Offset(150 * scale, 50 * scale),
-        Offset(130 * scale, 130 * scale),
-        Offset(50 * scale, 150 * scale),
-      ],
-      fillColor: const Color(0xFF414750),
-      strokeWidth: 2 * scale,
-    );
-    canvas.restore();
-
-    // Polygon 4: gradient polygon (center diamond)
-    // SVG: x1="0%" y1="0%" x2="10%" y2="100%"
-    final gradient1 = createGradient(
-      x1Percent: 0,
-      y1Percent: 0,
-      x2Percent: 10,
-      y2Percent: 100,
-      colors: [const Color(0xFF1E2026), const Color(0xFF414750)],
-      stops: [0.2, 0.6],
-    );
-    _drawPolygonWithGradient(
-      canvas,
-      [
-        Offset(100 * scale, 70 * scale),
-        Offset(150 * scale, 100 * scale),
-        Offset(100 * scale, 130 * scale),
-        Offset(50 * scale, 100 * scale),
-      ],
-      gradient: gradient1,
-      strokeWidth: 2 * scale,
-    );
-
-    // Polygon 5: yellow polygon (translated)
-    canvas.save();
-    canvas.translate(20 * scale, 31 * scale);
-    _drawPolygon(
-      canvas,
-      [
-        Offset(80 * scale, 50 * scale),
-        Offset(80 * scale, 75 * scale),
-        Offset(80 * scale, 99 * scale),
-        Offset(40 * scale, 75 * scale),
-      ],
-      fillColor: const Color(0xFFB7870F),
-      strokeWidth: 2 * scale,
-    );
-    canvas.restore();
-
-    // Polygon 6: gradient polygon (translated) with animated umbral
-    // SVG: x1="10%" y1="-17%" x2="0%" y2="100%"
-    final gradient2 = createGradient(
-      x1Percent: 10,
-      y1Percent: -17,
-      x2Percent: 0,
-      y2Percent: 100,
-      colors: [const Color(0x00D3A510), umbralColor],
-      stops: [0.2, 1.0],
-    );
-    canvas.save();
-    canvas.translate(20 * scale, 31 * scale);
-    _drawPolygonWithGradient(
-      canvas,
-      [
-        Offset(40 * scale, -40 * scale),
-        Offset(80 * scale, -40 * scale),
-        Offset(80 * scale, 99 * scale),
-        Offset(40 * scale, 75 * scale),
-      ],
-      gradient: gradient2,
-      strokeWidth: 2 * scale,
-    );
-    canvas.restore();
-
-    // Polygon 7: yellow polygon (rotated 180°, translated)
-    canvas.save();
-    canvas.translate(centerX, centerY);
-    canvas.rotate(180 * math.pi / 180);
-    canvas.translate(-centerX, -centerY);
-    canvas.translate(20 * scale, 20 * scale);
-    _drawPolygon(
-      canvas,
-      [
-        Offset(80 * scale, 50 * scale),
-        Offset(80 * scale, 75 * scale),
-        Offset(80 * scale, 99 * scale),
-        Offset(40 * scale, 75 * scale),
-      ],
-      fillColor: const Color(0xFFD3A410),
-      strokeWidth: 2 * scale,
-    );
-    canvas.restore();
-
-    // Polygon 8: gradient polygon (rotated 0°, translated) with animated umbral
-    // SVG: x1="0%" y1="0%" x2="10%" y2="100%"
-    final gradient3 = createGradient(
-      x1Percent: 0,
-      y1Percent: 0,
-      x2Percent: 10,
-      y2Percent: 100,
-      colors: [const Color(0x00D3A510), umbralColor],
-      stops: [0.2, 1.0],
-    );
-    canvas.save();
-    canvas.translate(centerX, centerY);
-    canvas.rotate(0 * math.pi / 180);
-    canvas.translate(-centerX, -centerY);
-    canvas.translate(60 * scale, 20 * scale);
-    _drawPolygonWithGradient(
-      canvas,
-      [
-        Offset(40 * scale, -40 * scale),
-        Offset(80 * scale, -40 * scale),
-        Offset(80 * scale, 85 * scale),
-        Offset(40 * scale, 110.2 * scale),
-      ],
-      gradient: gradient3,
-      strokeWidth: 2 * scale,
-    );
-    canvas.restore();
-
-    // Particle 1 (rotated 45°, translated, animated)
-    canvas.save();
-    canvas.translate(centerX, centerY);
-    canvas.rotate(45 * math.pi / 180);
-    canvas.translate(-centerX, -centerY);
-    canvas.translate(80 * scale, 95 * scale);
-    canvas.translate(0, particlesOffset * scale);
-    _drawPolygon(
-      canvas,
-      [
-        Offset(5 * scale, 0),
-        Offset(5 * scale, 5 * scale),
-        Offset(0, 5 * scale),
-        Offset(0, 0),
-      ],
-      fillColor: const Color(0xFFFFE4A1),
-      strokeWidth: 2 * scale,
-    );
-    canvas.restore();
-
-    // Particle 2 (rotated 45°, translated, animated)
-    canvas.save();
-    canvas.translate(centerX, centerY);
-    canvas.rotate(45 * math.pi / 180);
-    canvas.translate(-centerX, -centerY);
-    canvas.translate(80 * scale, 55 * scale);
-    canvas.translate(0, particlesOffset * scale);
-    _drawPolygon(
-      canvas,
-      [
-        Offset(6 * scale, 0),
-        Offset(6 * scale, 6 * scale),
-        Offset(0, 6 * scale),
-        Offset(0, 0),
-      ],
-      fillColor: const Color(0xFFCCB069),
-      strokeWidth: 2 * scale,
-    );
-    canvas.restore();
-
-    // Particle 3 (rotated 45°, translated, animated)
-    canvas.save();
-    canvas.translate(centerX, centerY);
-    canvas.rotate(45 * math.pi / 180);
-    canvas.translate(-centerX, -centerY);
-    canvas.translate(70 * scale, 80 * scale);
-    canvas.translate(0, particlesOffset * scale);
-    _drawPolygon(
-      canvas,
-      [
-        Offset(2 * scale, 0),
-        Offset(2 * scale, 2 * scale),
-        Offset(0, 2 * scale),
-        Offset(0, 0),
-      ],
-      fillColor: Colors.white,
-      strokeWidth: 2 * scale,
-    );
-    canvas.restore();
-
-    // Polygon 9: dark bottom polygon
-    _drawPolygon(
-      canvas,
-      [
-        Offset(29.5 * scale, 99.8 * scale),
-        Offset(100 * scale, 142 * scale),
-        Offset(100 * scale, 172 * scale),
-        Offset(29.5 * scale, 130 * scale),
-      ],
-      fillColor: const Color(0xFF292D34),
-      strokeWidth: 2 * scale,
-    );
-
-    // Polygon 10: dark top polygon (translated)
-    canvas.save();
-    canvas.translate(50 * scale, 92 * scale);
-    _drawPolygon(
-      canvas,
-      [
-        Offset(50 * scale, 50 * scale),
-        Offset(120.5 * scale, 8 * scale),
-        Offset(120.5 * scale, 35 * scale),
-        Offset(50 * scale, 80 * scale),
-      ],
-      fillColor: const Color(0xFF1F2127),
-      strokeWidth: 2 * scale,
-    );
-    canvas.restore();
-
-    canvas.restore();
-  }
-
-  void _drawPolygon(
-    Canvas canvas,
-    List<Offset> points, {
-    Color? fillColor,
-    Color? strokeColor,
-    double strokeWidth = 0,
-    bool fill = true,
-  }) {
-    final path = Path();
-    if (points.isNotEmpty) {
-      path.moveTo(points[0].dx, points[0].dy);
-      for (int i = 1; i < points.length; i++) {
-        path.lineTo(points[i].dx, points[i].dy);
-      }
-      path.close();
-    }
-
-    if (fill && fillColor != null) {
-      canvas.drawPath(
-        path,
-        Paint()
-          ..color = fillColor
-          ..style = PaintingStyle.fill,
-      );
-    }
-
-    if (strokeWidth > 0 && strokeColor != null) {
-      canvas.drawPath(
-        path,
-        Paint()
-          ..color = strokeColor
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = strokeWidth,
-      );
-    }
-  }
-
-  void _drawPolygonWithGradient(
-    Canvas canvas,
-    List<Offset> points, {
-    required Gradient gradient,
-    double strokeWidth = 0,
-  }) {
-    final path = Path();
-    if (points.isNotEmpty) {
-      path.moveTo(points[0].dx, points[0].dy);
-      for (int i = 1; i < points.length; i++) {
-        path.lineTo(points[i].dx, points[i].dy);
-      }
-      path.close();
-    }
-
-    // Calculate bounding box for gradient
-    final bounds = path.getBounds();
-    final rect = Rect.fromLTWH(
-      bounds.left,
-      bounds.top,
-      bounds.width,
-      bounds.height,
-    );
-
-    canvas.drawPath(
-      path,
-      Paint()
-        ..shader = gradient.createShader(rect)
-        ..style = PaintingStyle.fill,
-    );
-
-    if (strokeWidth > 0) {
-      canvas.drawPath(
-        path,
-        Paint()
-          ..color = Colors.transparent
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = strokeWidth,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_LogoPainter oldDelegate) {
-    return oldDelegate.bounceOffset != bounceOffset ||
-        oldDelegate.bounce2Offset != bounce2Offset ||
-        oldDelegate.umbralProgress != umbralProgress ||
-        oldDelegate.particlesOffset != particlesOffset ||
-        oldDelegate.size != size;
   }
 }

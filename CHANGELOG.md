@@ -1,3 +1,10 @@
+## 0.0.5
+
+* Converted to use flutter_svg for direct SVG rendering
+* Implemented 100% accurate HTML/CSS to Flutter conversion
+* All CSS animations converted to Flutter animations
+* SVG structure matches original HTML exactly
+
 ## 0.0.4
 
 * Fixed animated logo to match exact SVG/CSS specifications
