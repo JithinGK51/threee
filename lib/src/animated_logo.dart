@@ -37,6 +37,7 @@ class _AnimatedLogoState extends State<AnimatedLogo>
     super.initState();
 
     // Bounce animation (4s ease-in-out infinite)
+    // CSS: 0%,100% translate: 0px 36px, 50% translate: 0px 46px
     _bounceController = AnimationController(
       duration: const Duration(seconds: 4),
       vsync: this,
@@ -46,6 +47,7 @@ class _AnimatedLogoState extends State<AnimatedLogo>
     );
 
     // Bounce2 animation (4s ease-in-out infinite, 0.5s delay)
+    // CSS: 0%,100% translate: 0px 46px, 50% translate: 0px 56px
     _bounce2Controller = AnimationController(
       duration: const Duration(seconds: 4),
       vsync: this,
@@ -58,6 +60,7 @@ class _AnimatedLogoState extends State<AnimatedLogo>
     });
 
     // Umbral animation (color animation, 4s infinite)
+    // CSS: 0% #d3a5102e, 50% rgba(211, 165, 16, 0.519), 100% #d3a5102e
     _umbralController = AnimationController(
       duration: const Duration(seconds: 4),
       vsync: this,
@@ -68,6 +71,7 @@ class _AnimatedLogoState extends State<AnimatedLogo>
     ).animate(CurvedAnimation(parent: _umbralController, curve: Curves.linear));
 
     // Particles animation (4s ease-in-out infinite)
+    // CSS: 0%,100% translate: 0px 16px, 50% translate: 0px 6px
     _particlesController = AnimationController(
       duration: const Duration(seconds: 4),
       vsync: this,
@@ -139,7 +143,6 @@ class _LogoPainter extends CustomPainter {
     canvas.save();
 
     // Helper function to create gradient
-    // SVG gradients use percentages: x1, y1, x2, y2 as percentages
     LinearGradient createGradient({
       required double x1Percent,
       required double y1Percent,
@@ -162,15 +165,17 @@ class _LogoPainter extends CustomPainter {
       );
     }
 
-    // Animated umbral color
-    final umbralColor =
-        Color.lerp(
-          const Color(0x2ED3A510),
-          const Color(0x84D3A510),
-          (math.sin(umbralProgress * 2 * math.pi) + 1) / 2,
-        )!;
+    // Animated umbral color - matches CSS exactly
+    // 0%: #d3a5102e (0x2E = 46/255 ≈ 0.18 opacity)
+    // 50%: rgba(211, 165, 16, 0.519) (0x84 = 132/255 ≈ 0.52 opacity)
+    // 100%: #d3a5102e
+    final umbralOpacity =
+        0.18 +
+        (0.519 - 0.18) * (math.sin(umbralProgress * 2 * math.pi) + 1) / 2;
+    final umbralColor = Color(0xFFD3A510).withValues(alpha: umbralOpacity);
 
-    // Polygon 1: bounce (rotated 45°, stroke only)
+    // Draw polygons in the correct order (matching SVG order)
+    // Polygon 1: bounce (rotated 45°, stroke only, animated)
     canvas.save();
     canvas.translate(centerX, centerY);
     canvas.rotate(45 * math.pi / 180);
@@ -190,7 +195,7 @@ class _LogoPainter extends CustomPainter {
     );
     canvas.restore();
 
-    // Polygon 2: bounce2 (rotated 45°, stroke only)
+    // Polygon 2: bounce2 (rotated 45°, stroke only, animated with delay)
     canvas.save();
     canvas.translate(centerX, centerY);
     canvas.rotate(45 * math.pi / 180);
@@ -266,7 +271,7 @@ class _LogoPainter extends CustomPainter {
     );
     canvas.restore();
 
-    // Polygon 6: gradient polygon (translated)
+    // Polygon 6: gradient polygon (translated) with animated umbral
     // SVG: x1="10%" y1="-17%" x2="0%" y2="100%"
     final gradient2 = createGradient(
       x1Percent: 10,
@@ -310,7 +315,7 @@ class _LogoPainter extends CustomPainter {
     );
     canvas.restore();
 
-    // Polygon 8: gradient polygon (rotated 0°, translated)
+    // Polygon 8: gradient polygon (rotated 0°, translated) with animated umbral
     // SVG: x1="0%" y1="0%" x2="10%" y2="100%"
     final gradient3 = createGradient(
       x1Percent: 0,
