@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Fixed code formatting issues to pass Dart formatter checks
+
 ## 0.0.2
 
 * Fixed static analysis issues (use super parameters)
