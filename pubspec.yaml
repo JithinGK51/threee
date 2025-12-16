@@ -1,6 +1,6 @@
 name: threee
 description: "An animated 3D-style geometric logo widget for Flutter with smooth bouncing animations and gradient effects."
-version: 0.0.5
+version: 0.0.6
 homepage: https://github.com/JithinGK51/threee
 repository: https://github.com/JithinGK51/threee
 
@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_svg: ^2.0.10+1
+  flutter_html: ^3.0.0-beta.2
 
 dev_dependencies:
   flutter_test:

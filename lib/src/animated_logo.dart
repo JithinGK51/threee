@@ -1,10 +1,10 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 /// An animated logo widget that displays a 3D-style geometric logo
 /// with bouncing animations and gradient effects.
-/// Uses SVG rendering with Flutter animations matching CSS keyframes.
+/// Uses HTML/CSS rendering with embedded styles matching the original.
 class AnimatedLogo extends StatefulWidget {
   /// The size of the logo (width and height)
   final double size;
@@ -89,7 +89,7 @@ class _AnimatedLogoState extends State<AnimatedLogo>
     super.dispose();
   }
 
-  String _getAnimatedSvg() {
+  String _getHtmlWithCss() {
     // Calculate umbral color for animated stops
     final umbralOpacityValue =
         (math.sin(_umbralAnimation.value * 2 * math.pi) + 1) / 2;
@@ -101,6 +101,72 @@ class _AnimatedLogoState extends State<AnimatedLogo>
     final umbralColor = '#d3a510$umbralHex';
 
     return '''
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+/* From Uiverse.io by Juanes200122 */
+.container {
+  background-color: #414141;
+}
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translate(0px, 36px);
+  }
+  50% {
+    transform: translate(0px, 46px);
+  }
+}
+@keyframes bounce2 {
+  0%,
+  100% {
+    transform: translate(0px, 46px);
+  }
+  50% {
+    transform: translate(0px, 56px);
+  }
+}
+@keyframes umbral {
+  0% {
+    stop-color: #d3a5102e;
+  }
+  50% {
+    stop-color: rgba(211, 165, 16, 0.519);
+  }
+  100% {
+    stop-color: #d3a5102e;
+  }
+}
+@keyframes partciles {
+  0%,
+  100% {
+    transform: translate(0px, 16px);
+  }
+  50% {
+    transform: translate(0px, 6px);
+  }
+}
+#particles {
+  animation: partciles 4s ease-in-out infinite;
+}
+#animatedStop {
+  animation: umbral 4s infinite;
+}
+#bounce {
+  animation: bounce 4s ease-in-out infinite;
+  transform: translate(0px, ${_bounceAnimation.value}px);
+}
+#bounce2 {
+  animation: bounce2 4s ease-in-out infinite;
+  transform: translate(0px, ${_bounce2Animation.value}px);
+  animation-delay: 0.5s;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<!-- From Uiverse.io by Juanes200122 -->
 <svg xmlns="http://www.w3.org/2000/svg" height="200" width="200">
   <defs>
     <linearGradient y2="100%" x2="10%" y1="0%" x1="0%" id="gradiente">
@@ -109,16 +175,24 @@ class _AnimatedLogoState extends State<AnimatedLogo>
     </linearGradient>
     <linearGradient y2="100%" x2="0%" y1="-17%" x1="10%" id="gradiente2">
       <stop style="stop-color: #d3a51000;stop-opacity:1" offset="20%"></stop>
-      <stop style="stop-color:$umbralColor;stop-opacity:1" offset="100%" id="animatedStop2"></stop>
+      <stop
+        style="stop-color:$umbralColor;stop-opacity:1"
+        offset="100%"
+        id="animatedStop"
+      ></stop>
     </linearGradient>
     <linearGradient y2="100%" x2="10%" y1="0%" x1="0%" id="gradiente3">
       <stop style="stop-color: #d3a51000;stop-opacity:1" offset="20%"></stop>
-      <stop style="stop-color:$umbralColor;stop-opacity:1" offset="100%" id="animatedStop3"></stop>
+      <stop
+        style="stop-color:$umbralColor;stop-opacity:1"
+        offset="100%"
+        id="animatedStop"
+      ></stop>
     </linearGradient>
   </defs>
   <g style="order: -1;">
     <polygon
-      transform="rotate(45 100 100) translate(0, ${_bounceAnimation.value})"
+      transform="rotate(45 100 100)"
       stroke-width="1"
       stroke="#d3a410"
       fill="none"
@@ -126,7 +200,7 @@ class _AnimatedLogoState extends State<AnimatedLogo>
       id="bounce"
     ></polygon>
     <polygon
-      transform="rotate(45 100 100) translate(0, ${_bounce2Animation.value})"
+      transform="rotate(45 100 100)"
       stroke-width="1"
       stroke="#d3a410"
       fill="none"
@@ -213,6 +287,9 @@ class _AnimatedLogoState extends State<AnimatedLogo>
     ></polygon>
   </g>
 </svg>
+</div>
+</body>
+</html>
 ''';
   }
 
@@ -230,11 +307,21 @@ class _AnimatedLogoState extends State<AnimatedLogo>
           _particlesAnimation,
         ]),
         builder: (context, child) {
-          return SvgPicture.string(
-            _getAnimatedSvg(),
-            width: widget.size,
-            height: widget.size,
-            fit: BoxFit.contain,
+          return Html(
+            data: _getHtmlWithCss(),
+            style: {
+              "body": Style(
+                margin: Margins.zero,
+                padding: HtmlPaddings.zero,
+                width: Width(widget.size),
+                height: Height(widget.size),
+              ),
+              ".container": Style(
+                width: Width(widget.size),
+                height: Height(widget.size),
+                backgroundColor: widget.backgroundColor,
+              ),
+            },
           );
         },
       ),

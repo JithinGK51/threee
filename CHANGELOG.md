@@ -1,3 +1,10 @@
+## 0.0.6
+
+* Converted to use flutter_html for HTML/CSS rendering
+* Embedded CSS styles directly in HTML structure
+* Exact HTML/CSS code structure preserved
+* Flutter animations match CSS keyframes behavior
+
 ## 0.0.5
 
 * Converted to use flutter_svg for direct SVG rendering
